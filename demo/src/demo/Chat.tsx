@@ -158,7 +158,7 @@ const toolbar: ToolbarItemProps[] = [
 
 export default () => {
   // 消息列表
-  const { messages, appendMsg, setTyping, prependMsgs } = useMessages(initialMessages);
+  const { messages, appendMsg, appendMsg2, prependMsgs } = useMessages(initialMessages);
   const { quickReplies, replace } = useQuickReplies(defaultQuickReplies);
   const msgRef = React.useRef(null);
 
@@ -177,17 +177,36 @@ export default () => {
         position: 'right',
       });
 
-      setTimeout(() => {
-        setTyping(true);
-      }, 1000);
-
       // 模拟回复消息
-      setTimeout(() => {
-        appendMsg({
-          type: 'text',
-          content: { text: '亲，您遇到什么问题啦？请简要描述您的问题~' },
-        });
-      }, 1500);
+      // setTimeout(() => {
+      //   appendMsg({
+      //     type: 'text',
+      //     content: { text: '亲，您遇到什么问题啦？请简要描述您的问题~' },
+      //   });
+      // }, 1500);
+      // 模拟一个字一个字的拼接出来：
+
+      const text = '亲，您遇到什么问题啦？请简要描述您的问题~看起来是不是类似chatgpt';
+      let currentIndex = 0;
+      appendMsg({
+        type: 'text',
+        content: { text: '' }
+      });
+      let alreadyText = ''
+      function appendText() {
+        if (currentIndex < text.length) {
+          const currentChar = text[currentIndex];
+          alreadyText = alreadyText + currentChar
+          appendMsg2({
+            type: 'text',
+            content: { text: alreadyText },
+          });
+          currentIndex++;
+          setTimeout(appendText, 400); // 延迟1秒钟执行下一个字符的拼接
+        }
+      }
+
+      setTimeout(appendText, 1500); // 延迟1.5秒开始拼接
     }
   }
 
@@ -217,7 +236,7 @@ export default () => {
   }
 
   function handleRefresh() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         const now = Date.now();
 
@@ -310,7 +329,7 @@ export default () => {
             className="skill-cards"
             data={skillList}
             fullWidth
-            renderItem={(item) => (
+            renderItem={item => (
               <Card>
                 <CardTitle>{item.title}</CardTitle>
                 <CardText>{item.desc}</CardText>

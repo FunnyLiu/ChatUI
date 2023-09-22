@@ -42,7 +42,17 @@ export default function useMessages(initialState: MessageWithoutId[] = []) {
 
   const appendMsg = useCallback((msg: MessageWithoutId) => {
     const newMsg = makeMsg(msg);
+    console.log('appendMsg')
     setMessages((prev) => [...prev, newMsg]);
+  }, []);
+
+  const appendMsg2 = useCallback((msg: MessageWithoutId) => {
+    const newMsg = makeMsg(msg);
+    console.log('appendMsg2')
+    setMessages(prev => {
+      const updatedMessages = [...prev.slice(0, prev.length - 1), newMsg];
+      return updatedMessages;
+    });
   }, []);
 
   const deleteMsg = useCallback((id: MessageId) => {
@@ -57,6 +67,7 @@ export default function useMessages(initialState: MessageWithoutId[] = []) {
     messages,
     prependMsgs,
     appendMsg,
+    appendMsg2,
     updateMsg,
     deleteMsg,
     resetList,
